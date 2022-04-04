@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Taller_2
 {
-    internal class Equip : Carta
+    internal class Equip
     {
-
     }
 }
