@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace Taller_2
 {
-    internal class Player
+     class Player
     {
         private List<Card> deck = new List<Card>();
         private int barajaCp;
+        private bool vivo;
 
-        public Player(List<Card> deck, int barajacp)
+        public Player(List<Card> deck, int barajacp,bool vivo)
         {
             Deck = deck;
             BarajaCp = barajacp;
+            Vivo = vivo;
         }
 
         public int BarajaCp { get => barajaCp; set => barajaCp = value; }
-        internal List<Card> Deck { get => deck; set => deck = value; }       
-             
+        internal List<Card> Deck { get => deck; set => deck = value; }
+        public bool Vivo { get => vivo; set => vivo = value; }
+
         public void AñadirCartas()
         {
             List<Equip> EquipCharacter1 = new List<Equip>();
@@ -35,7 +38,7 @@ namespace Taller_2
             Character CartaCharacter_4 = new Character("Victor", "Common", 1, 5, 10, EquipCharacter4, "Knight");
 
             List<Equip> EquipCharacter5 = new List<Equip>();
-            Character CartaCharacter_5 = new Character("Cristian", "UltraRare", 1, 5, 10, EquipCharacter5, "Undead");
+            Character CartaCharacter_5 = new Character("Cristian", "UltraRare", 1, 15, 40, EquipCharacter5, "Undead");
 
             Equip CartaEquip1 = new Equip("Sword", "Common", 1, "AP" , 2, "Knight");
             Equip CartaEquip2 = new Equip("Shield", "Rare", 1, "RP", 3, "Mage");
@@ -54,31 +57,43 @@ namespace Taller_2
             Support_Skill support_Skill4 = new Support_Skill("Escupitajo", "UltraRare", 1, "ReduceAP", 5);
             Support_Skill support_Skill5 = new Support_Skill("Poción Magica", "UltraRare", 1, "RestoreRP", 5);
 
-            deck.Add(CartaCharacter_1);
-            deck.Add(CartaCharacter_2);
-            deck.Add(CartaCharacter_3);
-            deck.Add(CartaCharacter_4);
-            deck.Add(CartaCharacter_5);
-            
-            deck.Add(CartaEquip1);
-            deck.Add(CartaEquip2);
-            deck.Add(CartaEquip3);
-            deck.Add(CartaEquip4);
-            deck.Add(CartaEquip5);
-            deck.Add(CartaEquip6);
-            deck.Add(CartaEquip7);
-            deck.Add(CartaEquip8);
-            deck.Add(CartaEquip9);
-            deck.Add(CartaEquip10);
+            RestarCP(CartaCharacter_1);
+            RestarCP(CartaCharacter_2);
+            RestarCP(CartaCharacter_3);
+            RestarCP(CartaCharacter_4);
+            RestarCP(CartaCharacter_5);
 
-            deck.Add(support_Skill1);
-            deck.Add(support_Skill2);
-            deck.Add(support_Skill3);
-            deck.Add(support_Skill4);
-            deck.Add(support_Skill5);
+            RestarCP(CartaEquip1);
+            RestarCP(CartaEquip2);
+            RestarCP(CartaEquip3);
+            RestarCP(CartaEquip4);
+            RestarCP(CartaEquip5);
+            RestarCP(CartaEquip6);
+            RestarCP(CartaEquip7);
+            RestarCP(CartaEquip8);
+            RestarCP(CartaEquip9);
+            RestarCP(CartaEquip10);
+
+            RestarCP(support_Skill1);
+            RestarCP(support_Skill2);
+            RestarCP(support_Skill3);
+            RestarCP(support_Skill4);
+            RestarCP(support_Skill5);
            
         }
-        public void Atacar(Card CartaAtaque, Character Objetivo)
+        public void RestarCP(Card Carta)
+        {
+
+            if(barajaCp>= Carta.CostPoints)
+            {
+                deck.Add(Carta);
+                barajaCp = barajaCp - Carta.CostPoints;
+            }
+            
+        }
+
+
+        public void Atacar(Card CartaAtaque, Character Objetivo,Character Atacante,Player jugador,Player Enemigo)
         {
             if (CartaAtaque is Character)
             {
@@ -91,6 +106,8 @@ namespace Taller_2
                     {
                         CharacterTemporal.AttackPoint = CharacterTemporal.AttackPoint + 1;
                         Objetivo.ResistPoints = Objetivo.ResistPoints - 1;
+
+                        
                     }
                     else if (CharacterTemporal.Affinity == "Undead" && Objetivo.Affinity == "Knight")
                     {
@@ -118,6 +135,7 @@ namespace Taller_2
                 {
                     CharacterTemporal.ResistPoints = CharacterTemporal.ResistPoints - Objetivo.AttackPoint;
                 }
+                CartaAtaque = CharacterTemporal;
             }
             else if (CartaAtaque is Support_Skill)
             {
@@ -132,8 +150,23 @@ namespace Taller_2
                 }
                 else if (SupportSkillTemporal.TypeEffect == "DestroyEquip")
                 {
-                                                 
-
+                    if (Objetivo.EquipCharacter.Count() > 0)//
+                    {
+                        if (Objetivo.EquipCharacter[0].TargetAttribute == "AP")
+                        {
+                            Objetivo.AttackPoint = Objetivo.AttackPoint - Objetivo.EquipCharacter[0].EffectivePoints;
+                        }
+                        if (Objetivo.EquipCharacter[0].TargetAttribute == "RP")
+                        {
+                            Objetivo.ResistPoints = Objetivo.ResistPoints - Objetivo.EquipCharacter[0].EffectivePoints;
+                        }
+                        if (Objetivo.EquipCharacter[0].TargetAttribute == "ALL")
+                        {
+                            Objetivo.AttackPoint = Objetivo.AttackPoint - Objetivo.EquipCharacter[0].EffectivePoints;
+                            Objetivo.ResistPoints = Objetivo.ResistPoints - Objetivo.EquipCharacter[0].EffectivePoints;
+                        }
+                        Objetivo.EquipCharacter.RemoveAt(0);
+                    }                      
                 }
                 else if (SupportSkillTemporal.TypeEffect == "ReduceALL")
                 {
@@ -143,10 +176,74 @@ namespace Taller_2
                 }
                 else if (SupportSkillTemporal.TypeEffect == "RestoreRP")
                 {
+                    Character CharacterTemporal = CartaAtaque as Character;
+                    Atacante.ResistPoints = 40;               
+                }
+                CartaAtaque = SupportSkillTemporal;
 
+            }
+            if (Objetivo.ResistPoints == 0)
+            {
+                Enemigo.Deck.Remove(Objetivo);
+                int cont = 0;
+
+                for(int i = 0; i <= Enemigo.Deck.Count; i++)
+                {
+                    if(Enemigo.Deck[i] is Character)
+                    {
+                        cont++;
+                    }
+                }
+                if(cont < 1)
+                {
+                    Enemigo.vivo = false;
+                }
+
+
+            }
+            Character CharacterTempora2 = CartaAtaque as Character;
+            if (CharacterTempora2.ResistPoints == 0)
+            {
+                jugador.Deck.Remove(CartaAtaque);
+
+                int cont = 0;
+
+                for (int i = 0; i <= jugador.Deck.Count; i++)
+                {
+                    if (jugador.Deck[i] is Character)
+                    {
+                        cont++;
+                    }
+                }
+                if (cont < 1)
+                {
+                    jugador.vivo = false;
                 }
             }
-                  
-        }      
+
+        }
+        public void UsarEquip(Equip Equiptemp,Character personaje)
+        {
+            personaje.EquipCharacter.Add(Equiptemp);
+
+            
+                if (Equiptemp.TargetAttribute == "AP")
+                {
+                personaje.AttackPoint = personaje.AttackPoint + Equiptemp.EffectivePoints;
+                }
+                if (Equiptemp.TargetAttribute == "RP")
+                {
+                personaje.ResistPoints = personaje.ResistPoints + Equiptemp.EffectivePoints;
+                }
+                if (Equiptemp.TargetAttribute == "ALL")
+                {
+                personaje.AttackPoint = personaje.AttackPoint + Equiptemp.EffectivePoints;
+                personaje.ResistPoints = personaje.ResistPoints + Equiptemp.EffectivePoints;
+                }
+                          
+            Deck.Remove(Equiptemp);
+
+        }
+
     }
 }

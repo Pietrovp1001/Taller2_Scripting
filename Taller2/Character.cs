@@ -11,7 +11,7 @@ namespace Taller_2
 
         public int AttackPoint;
         public int ResistPoints;
-        private List<Equip> EquipCharacter = new List<Equip>();
+        public List<Equip> EquipCharacter = new List<Equip>();
         public string Affinity;
         public Character(string name, string rarity, int costPoints, int attackPoint, int resistPoints, List<Equip> equipCharacter, string affinity) : base(name, rarity, costPoints)
         {
