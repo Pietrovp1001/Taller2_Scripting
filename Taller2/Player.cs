@@ -53,9 +53,9 @@ namespace Taller_2
 
             Support_Skill support_Skill1 = new Support_Skill("Infect", "Common", 1, "ReduceRP", 2);
             Support_Skill support_Skill2 = new Support_Skill("Fire Ball", "Rare", 1, "ReduceALL", 3);
-            Support_Skill support_Skill3 = new Support_Skill("Puñalada al esternon", "SuperRare", 1, "DestroyEquip", 4);
-            Support_Skill support_Skill4 = new Support_Skill("Escupitajo", "UltraRare", 1, "ReduceAP", 5);
-            Support_Skill support_Skill5 = new Support_Skill("Poción Magica", "UltraRare", 1, "RestoreRP", 5);
+            Support_Skill support_Skill3 = new Support_Skill("Puñalada al esternon", "SuperRare", 1, "DestroyEquip", 0);
+            Support_Skill support_Skill4 = new Support_Skill("Escupitajo", "UltraRare", 1, "ReduceAP", 2);
+            Support_Skill support_Skill5 = new Support_Skill("Poción Magica", "UltraRare", 1, "RestoreRP", 0);
 
             RestarCP(CartaCharacter_1);
             RestarCP(CartaCharacter_2);
@@ -105,24 +105,24 @@ namespace Taller_2
                     if (CharacterTemporal.Affinity == "Mage" && Objetivo.Affinity == "Undead")
                     {
                         CharacterTemporal.AttackPoint = CharacterTemporal.AttackPoint + 1;
-                        Objetivo.ResistPoints = Objetivo.ResistPoints - 1;
+                        Objetivo.AttackPoint = Objetivo.AttackPoint - 1;
 
                         
                     }
                     else if (CharacterTemporal.Affinity == "Undead" && Objetivo.Affinity == "Knight")
                     {
                         CharacterTemporal.AttackPoint = CharacterTemporal.AttackPoint + 1;
-                        Objetivo.ResistPoints = Objetivo.ResistPoints - 1;
+                        Objetivo.AttackPoint = Objetivo.AttackPoint - 1;
                     }
                     else if (CharacterTemporal.Affinity == "Knight" && Objetivo.Affinity == "Mage")
                     {
                         CharacterTemporal.AttackPoint = CharacterTemporal.AttackPoint + 1;
-                        Objetivo.ResistPoints = Objetivo.ResistPoints - 1;
+                        Objetivo.AttackPoint = Objetivo.AttackPoint - 1;
                     }
                     else
                     {
                         CharacterTemporal.AttackPoint = CharacterTemporal.AttackPoint - 1;
-                        Objetivo.ResistPoints = Objetivo.ResistPoints + 1;
+                        Objetivo.AttackPoint = Objetivo.AttackPoint + 1;
                     }
                 }
 
@@ -176,8 +176,25 @@ namespace Taller_2
                 }
                 else if (SupportSkillTemporal.TypeEffect == "RestoreRP")
                 {
-                    Character CharacterTemporal = CartaAtaque as Character;
-                    Atacante.ResistPoints = 40;               
+                    Character CharacterTemporal = Atacante as Character;
+                    if(CharacterTemporal.Rarity== "UltraRare")
+                    {
+                        Atacante.ResistPoints = 40;
+                    }
+                    if (CharacterTemporal.Rarity == "SuperRare")
+                    {
+                        Atacante.ResistPoints = 30;
+                    }
+                    if (CharacterTemporal.Rarity == "Rare")
+                    {
+                        Atacante.ResistPoints = 20;
+                    }
+                    if (CharacterTemporal.Rarity == "Common")
+                    {
+                        Atacante.ResistPoints = 10;
+                    }
+
+
                 }
                 CartaAtaque = SupportSkillTemporal;
 
@@ -187,7 +204,7 @@ namespace Taller_2
                 Enemigo.Deck.Remove(Objetivo);
                 int cont = 0;
 
-                for(int i = 0; i <= Enemigo.Deck.Count; i++)
+                for(int i = 0; i < Enemigo.Deck.Count; i++)
                 {
                     if(Enemigo.Deck[i] is Character)
                     {
@@ -201,14 +218,14 @@ namespace Taller_2
 
 
             }
-            Character CharacterTempora2 = CartaAtaque as Character;
-            if (CharacterTempora2.ResistPoints == 0)
+            Character CharacterTempora2 = Atacante as Character;
+            if (CharacterTempora2.ResistPoints <= 0)
             {
                 jugador.Deck.Remove(CartaAtaque);
 
                 int cont = 0;
 
-                for (int i = 0; i <= jugador.Deck.Count; i++)
+                for (int i = 0; i < jugador.Deck.Count; i++)
                 {
                     if (jugador.Deck[i] is Character)
                     {

@@ -15,11 +15,11 @@ namespace Taller_2
         List<Card> LJugador = new List<Card>();
         List<Card> LEnemigo = new List<Card>();
 
-        public void CrearJugadores()
+        public void InicializarJugadores()
         {
             
             jugador = new Player(LJugador,20,true);
-            jugador = new Player(LEnemigo, 20, true);
+            Enemigo = new Player(LEnemigo, 20, true);
             jugador.AñadirCartas();
             Enemigo.AñadirCartas();
         }
@@ -35,10 +35,50 @@ namespace Taller_2
         [Test]
         public void CrearJugador()
         {
-            CrearJugador();
+            InicializarJugadores();
             Assert.IsTrue(jugador.Deck.Count>0);//su baraja ya no esta vacia 
             Assert.IsTrue(jugador.BarajaCp==0);//al recibir 20 cartas se queda sin cp pues empieza con 20
 
         }
+        [Test]
+        public void Atacar()
+        {
+            //Characters
+            InicializarJugadores();
+            Card Character3 = Enemigo.Deck[3];
+            jugador.Atacar(jugador.Deck[0], (Character)Enemigo.Deck[3],(Character)jugador.Deck[0],jugador,Enemigo);
+            Assert.IsFalse(Enemigo.Deck.Contains(Character3));//EL enemigo pierde la carta Character al quedarse sin puntos de resistencia
+
+            Card Character2 = Enemigo.Deck[2];
+            jugador.Atacar(jugador.Deck[0], (Character)Enemigo.Deck[2], (Character)jugador.Deck[0], jugador, Enemigo);
+            Assert.IsTrue(Enemigo.Deck.Contains(Character2));//el character no se a quedado sin PR por lo que aun se mantiene en la baraja 
+            Character Personaje2 = Enemigo.Deck[2] as Character;
+            Assert.IsTrue(Personaje2.ResistPoints ==10);//el Character pierde 10 RP y queda con 10 RP de 20
+
+            jugador.Atacar(jugador.Deck[3], (Character)Enemigo.Deck[1], (Character)jugador.Deck[3], jugador, Enemigo);
+            Character Atacante = jugador.Deck[3] as Character;
+            Character Defensor = Enemigo.Deck[1] as Character;
+            Assert.IsTrue(Atacante.AttackPoint==6);//al empatar el atacante aumenta a 6 de AP al ser Knight y el defensor pierde un AP por ser Mage 
+            Assert.IsTrue(Defensor.AttackPoint == 4);
+            Assert.IsTrue(Defensor.ResistPoints == 24); // el perdedor pierde 6 PA de 30
+
+            //SuportSkills
+
+            //recuperar vida con recover RP                              a este le subiran la vida
+            Enemigo.Atacar(Enemigo.Deck[18], (Character)jugador.Deck[1], (Character)Enemigo.Deck[1], Enemigo, jugador);
+            Character Recuperado = Enemigo.Deck[1] as Character;
+            Assert.IsTrue(Recuperado.ResistPoints == 30);//recupera su salud inicial segun su Rareza
+
+            //suportSkills como ataque all
+            
+            
+
+        }
+        //matar al enemigo
+        //Probar Equip y Suport Destroy Equip 
+
+
+
+
     }
 }
