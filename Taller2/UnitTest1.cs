@@ -23,6 +23,14 @@ namespace Taller_2
             jugador.AñadirCartas();
             Enemigo.AñadirCartas();
         }
+        public void InicializarJugadoresPerdedores()
+        {
+
+            jugador = new Player(LJugador, 20, true);
+            Enemigo = new Player(LEnemigo, 20, true);
+            jugador.AñadirCartas();
+            Enemigo.AñadirCartaTipo2();
+        }
         [TearDown]
         public void ClearAllStructures()
         {
@@ -70,12 +78,45 @@ namespace Taller_2
             Assert.IsTrue(Recuperado.ResistPoints == 30);//recupera su salud inicial segun su Rareza
 
             //suportSkills como ataque all
-            
-            
+            jugador.Atacar(jugador.Deck[16], (Character)Enemigo.Deck[1], (Character)jugador.Deck[3], jugador, Enemigo);
+            Character afectado = Enemigo.Deck[1] as Character;
+            Assert.IsTrue(Recuperado.ResistPoints == 27);//pierde 3 AP y 3 RP
+            Assert.IsTrue(Recuperado.AttackPoint == 1);
+        }
+        [Test]
+        public void Perder()
+        {
+            InicializarJugadoresPerdedores();
+            jugador.Atacar(jugador.Deck[1], (Character)Enemigo.Deck[0], (Character)jugador.Deck[1], jugador, Enemigo);
+
+            Assert.IsTrue(Enemigo.Vivo==false);//El Enemigo solo tiene un Character y al morir, el enemigo pierde 
 
         }
-        //matar al enemigo
-        //Probar Equip y Suport Destroy Equip 
+        [Test]
+        public void Equips()
+        {
+            InicializarJugadoresPerdedores();
+            Enemigo.UsarEquip((Equip)Enemigo.Deck[1], (Character)Enemigo.Deck[0]);
+            Character afectado = Enemigo.Deck[0] as Character;
+            Assert.IsTrue(afectado.ResistPoints==4);
+        
+
+        }
+        [Test]
+        public void DestuirEquip()
+        {
+            InicializarJugadoresPerdedores();
+            Enemigo.UsarEquip((Equip)Enemigo.Deck[1], (Character)Enemigo.Deck[0]);
+
+            jugador.Atacar(jugador.Deck[17], (Character)Enemigo.Deck[0], (Character)jugador.Deck[1], jugador, Enemigo);
+
+
+            Character afectado = Enemigo.Deck[0] as Character;
+            Assert.IsTrue(afectado.ResistPoints == 1);//pierde su bonificacion
+
+
+        }
+        
 
 
 

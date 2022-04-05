@@ -22,7 +22,14 @@ namespace Taller_2
         public int BarajaCp { get => barajaCp; set => barajaCp = value; }
         internal List<Card> Deck { get => deck; set => deck = value; }
         public bool Vivo { get => vivo; set => vivo = value; }
-
+        public void AñadirCartaTipo2()
+        {
+            List<Equip> EquipCharacter1 = new List<Equip>();
+            Character victima = new Character("Ceberus", "UltraRare", 1, 1, 1, EquipCharacter1, "Knight");
+            Equip CartaEquip2 = new Equip("Shield", "Rare", 1, "RP", 3, "Knight");
+            RestarCP(victima);
+            RestarCP(CartaEquip2);
+        }
         public void AñadirCartas()
         {
             List<Equip> EquipCharacter1 = new List<Equip>();
@@ -150,7 +157,7 @@ namespace Taller_2
                 }
                 else if (SupportSkillTemporal.TypeEffect == "DestroyEquip")
                 {
-                    if (Objetivo.EquipCharacter.Count() > 0)//
+                    if (Objetivo.EquipCharacter.Count() > 0)
                     {
                         if (Objetivo.EquipCharacter[0].TargetAttribute == "AP")
                         {
@@ -199,7 +206,7 @@ namespace Taller_2
                 CartaAtaque = SupportSkillTemporal;
 
             }
-            if (Objetivo.ResistPoints == 0)
+            if (Objetivo.ResistPoints <= 0)
             {
                 Enemigo.Deck.Remove(Objetivo);
                 int cont = 0;
